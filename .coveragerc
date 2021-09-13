@@ -1,0 +1,6 @@
+[run]
+omit = myfirstcatapi/gunicorn_config.py
+data_file = /tmp/.myfirstcatapi.coverage
+
+[xml]
+output = /tmp/.myfirstcatapi.coverage.xml
