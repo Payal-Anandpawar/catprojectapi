@@ -202,3 +202,15 @@ def test_list_cats(
         cat_sort_params=expected_cat_sort_params,
         page=expected_page,
     )
+
+
+@mock.patch("myfirstcatapi.domains.cat_domain.get_total_cats_count")
+def test_get_total_cats_count(
+    mock_cat_domain_get_total_cats_count: mock.Mock,
+) -> None:
+    mock_cat_domain_get_total_cats_count.return_value = 1
+
+    response = client.get("/v1/cat/count")
+
+    assert (response.status_code, response.json()) == (200, 1)
+    mock_cat_domain_get_total_cats_count.assert_called_once_with()

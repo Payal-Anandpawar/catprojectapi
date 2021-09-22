@@ -169,3 +169,17 @@ def cat_summary_from_bson(cat: BSONDocument) -> dto.CatSummary:
         id=bson_id_to_cat_id(cat["_id"]),
         **cat,
     )
+
+
+async def get_total_cats_count() -> int:
+    cat_list = []
+
+    collection = await get_collection(_COLLECTION_NAME)
+    result = collection.find()
+
+    async for document in result:
+        cat_list.append(document)
+
+    count = len(cat_list)
+
+    return count

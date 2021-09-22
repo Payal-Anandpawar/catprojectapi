@@ -98,3 +98,11 @@ async def test_find_many(
         cat_sort_params=cat_sort_params,
         page=page,
     )
+
+
+@mock.patch("myfirstcatapi.models.cat_model.get_total_cats_count")
+@conftest.async_test
+async def test_get_total_cats_count(mock_cat_model_get_total_cats_count: mock.Mock) -> None:
+    await cat_domain.get_total_cats_count()
+
+    mock_cat_model_get_total_cats_count.assert_called_once_with()

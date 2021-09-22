@@ -79,3 +79,20 @@ async def list_cats(
     return dto.ListResponse[dto.CatSummary](
         results=cat_summary_list_response, metadata=cats.metadata
     )
+
+
+@router.get(
+    "/cat/count",
+    response_model=int,
+    response_model_exclude_unset=True,
+)
+async def get_total_cats_count() -> int:
+    """
+    API for Total cat count
+
+    \f
+    :return:
+    """
+    count = await cat_domain.get_total_cats_count()
+
+    return count

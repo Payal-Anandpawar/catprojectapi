@@ -28,3 +28,7 @@ async def find_many(
         page=page,
     )
     return results
+
+
+async def get_total_cats_count() -> int:
+    return await cat_model.get_total_cats_count()

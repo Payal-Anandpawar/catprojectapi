@@ -297,3 +297,40 @@ async def test_find_many(
     )
 
     assert found_cat_summaries == expected_cat_summaries
+
+
+@pytest.mark.parametrize(
+    "existing_cat_documents, expected_result",
+    [
+        (
+            [
+                {
+                    "_id": ObjectId("000000000000000000000101"),
+                    "name": "Sammybridge Cat",
+                    "ctime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                    "mtime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                },
+            ],
+            1,
+        ),
+    ],
+)
+@conftest.async_test
+async def test_get_total_cats_count(
+    existing_cat_documents: List[BSONDocument],
+    expected_result: int,
+) -> None:
+    collection = await get_collection(cat_model._COLLECTION_NAME)
+    await collection.insert_many(existing_cat_documents)
+
+    cat_count = await cat_model.get_total_cats_count()
+
+    assert cat_count == expected_result
+
+
+@conftest.async_test
+async def test_get_total_cats_count_if_no_cats() -> None:
+
+    cat_count = await cat_model.get_total_cats_count()
+
+    assert cat_count == 0
