@@ -4,9 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path, status
 
 from myfirstcatapi import dto, serializers
 from myfirstcatapi.domains import cat_domain
-
-# from typing import Optional
-
+from myfirstcatapi.exceptions import EntityNotFoundError
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -84,15 +82,15 @@ async def list_cats(
     )
 
 
-@router.get(
-    "/delete-cat/{cat_id}",
-    response_model=dto.UpdatedCount,
+@router.delete(
+    "/cats/{cat_id}",
+    response_model=dto.ResultCount,
     response_model_exclude_unset=True,
 )
 async def delete_cat(
     cat_id: dto.CatID = Path(..., title="Cat ID", description="The ID of the Cat to delete."),
     scope: dto.Scope = Depends(serializers.scope_from_query_param),
-) -> dto.UpdatedCount:
+) -> dto.ResultCount:
     """
     API for deleting one Cat by ID.
 
@@ -104,7 +102,7 @@ async def delete_cat(
     cat = await cat_domain.find_one(cat_filter=cat_filter)
 
     if not cat:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cat not found.")
+        raise EntityNotFoundError("Cat not found.")
 
     count = await cat_domain.delete_one(cat_id=cat_id)
 

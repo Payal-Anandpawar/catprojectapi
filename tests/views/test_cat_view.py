@@ -209,7 +209,7 @@ def test_list_cats(
     [
         (
             dto.CatID("000000000000000000000101"),
-            dto.UpdatedCount(
+            dto.ResultCount(
                 count=1,
             ),
             {"count": 1},
@@ -220,12 +220,12 @@ def test_list_cats(
 def test_delete_cat(
     mock_cat_domain_delete_one: mock.Mock,
     cat_id: dto.CatID,
-    expected_result: dto.UpdatedCount,
+    expected_result: dto.ResultCount,
     expected_response: dto.JSON,
 ) -> None:
     mock_cat_domain_delete_one.return_value = expected_result
 
-    response = client.get("/v1/delete-cat/" + cat_id)
+    response = client.delete("/v1/cats/" + cat_id)
 
     assert (response.status_code, response.json()) == (200, expected_response)
     mock_cat_domain_delete_one.assert_called_once_with(cat_id=cat_id)
@@ -237,6 +237,6 @@ def test_delete_cat_not_found(
 ) -> None:
     mock_cat_domain_delete_one.return_value = None
 
-    response = client.get("/v1/delete-cat/000000000000000000000000")
+    response = client.delete("/v1/cats/000000000000000000000000")
 
-    assert (response.status_code, response.json()) == (404, {"detail": "Cat not found."})
+    assert (response.status_code, response.json()) == (404, {"errors": "Cat not found."})

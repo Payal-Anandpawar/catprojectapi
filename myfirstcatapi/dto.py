@@ -122,5 +122,5 @@ class ListResponse(GenericModel, Generic[ResponseT]):
     metadata: PageMetadata
 
 
-class UpdatedCount(BaseModel):
+class ResultCount(BaseModel):
     count: int

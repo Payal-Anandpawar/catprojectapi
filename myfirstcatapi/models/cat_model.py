@@ -171,9 +171,8 @@ def cat_summary_from_bson(cat: BSONDocument) -> dto.CatSummary:
     )
 
 
-async def delete_one(cat_id: dto.CatID) -> dto.UpdatedCount:
+async def delete_one(cat_id: dto.CatID) -> dto.ResultCount:
 
-    count = 0
     filter = dto.CatFilter(
         cat_id=cat_id,
     )
@@ -181,14 +180,13 @@ async def delete_one(cat_id: dto.CatID) -> dto.UpdatedCount:
     try:
         match = cat_filter_to_db_match(filter)
     except EmptyResultsFilter:
-        return dto.UpdatedCount(count=count)
+        return dto.ResultCount(count=0)
 
     collection = await get_collection(_COLLECTION_NAME)
-    query = {"$set": {"is_removed": True}}
 
-    result = await collection.update_one(match, query)
+    result = await collection.delete_one(match)
 
     if result:
-        count = result.modified_count
+        count = result.deleted_count
 
-    return dto.UpdatedCount(count=count)
+    return dto.ResultCount(count=count)

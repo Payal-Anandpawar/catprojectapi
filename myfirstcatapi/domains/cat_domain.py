@@ -30,5 +30,5 @@ async def find_many(
     return results
 
 
-async def delete_one(cat_id: dto.CatID) -> dto.UpdatedCount:
+async def delete_one(cat_id: dto.CatID) -> dto.ResultCount:
     return await cat_model.delete_one(cat_id=cat_id)
