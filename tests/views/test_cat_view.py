@@ -214,3 +214,41 @@ def test_get_total_cats_count(
 
     assert (response.status_code, response.json()) == (200, 1)
     mock_cat_domain_get_total_cats_count.assert_called_once_with()
+
+
+@pytest.mark.parametrize(
+    "cat_id, expected_result, expected_response",
+    [
+        (
+            dto.CatID("000000000000000000000101"),
+            dto.ResultCount(
+                count=1,
+            ),
+            {"count": 1},
+        )
+    ],
+)
+@mock.patch("myfirstcatapi.domains.cat_domain.delete_one")
+def test_delete_cat(
+    mock_cat_domain_delete_one: mock.Mock,
+    cat_id: dto.CatID,
+    expected_result: dto.ResultCount,
+    expected_response: dto.JSON,
+) -> None:
+    mock_cat_domain_delete_one.return_value = expected_result
+
+    response = client.delete("/v1/cats/" + cat_id)
+
+    assert (response.status_code, response.json()) == (200, expected_response)
+    mock_cat_domain_delete_one.assert_called_once_with(cat_id=cat_id)
+
+
+@mock.patch("myfirstcatapi.domains.cat_domain.delete_one")
+def test_delete_cat_not_found(
+    mock_cat_domain_delete_one: mock.Mock,
+) -> None:
+    mock_cat_domain_delete_one.return_value = None
+
+    response = client.delete("/v1/cats/000000000000000000000000")
+
+    assert (response.status_code, response.json()) == (404, {"errors": "Cat not found."})

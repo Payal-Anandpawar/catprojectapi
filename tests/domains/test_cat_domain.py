@@ -106,3 +106,15 @@ async def test_get_total_cats_count(mock_cat_model_get_total_cats_count: mock.Mo
     await cat_domain.get_total_cats_count()
 
     mock_cat_model_get_total_cats_count.assert_called_once_with()
+
+
+@pytest.mark.parametrize(
+    "cat_id",
+    ["000000000000000000000101"],
+)
+@mock.patch("myfirstcatapi.models.cat_model.delete_one")
+@conftest.async_test
+async def test_delete_one(mock_cat_model_delete_one: mock.Mock, cat_id: dto.CatID) -> None:
+    await cat_domain.delete_one(cat_id)
+
+    mock_cat_model_delete_one.assert_called_once_with(cat_id=cat_id)
