@@ -2,6 +2,7 @@ import logging
 from typing import Optional
 
 from myfirstcatapi import dto
+from myfirstcatapi.events.cat_events import fire_cat_created
 from myfirstcatapi.libs import dates
 from myfirstcatapi.models import cat_model
 
@@ -11,7 +12,7 @@ logger = logging.getLogger(__name__)
 async def create_cat(new_cat: dto.UnsavedCat) -> dto.Cat:
     now = dates.get_utcnow()
     cat = await cat_model.create_cat(new_cat, now=now)
-    # fire_cat_created(cat.id)
+    fire_cat_created(cat.id)
     return cat
 
 
