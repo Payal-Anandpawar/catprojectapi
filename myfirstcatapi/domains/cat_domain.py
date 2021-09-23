@@ -10,7 +10,9 @@ logger = logging.getLogger(__name__)
 
 async def create_cat(new_cat: dto.UnsavedCat) -> dto.Cat:
     now = dates.get_utcnow()
-    return await cat_model.create_cat(new_cat, now=now)
+    cat = await cat_model.create_cat(new_cat, now=now)
+    # fire_cat_created(cat.id)
+    return cat
 
 
 async def find_one(cat_filter: dto.CatFilter) -> Optional[dto.Cat]:
@@ -32,3 +34,12 @@ async def find_many(
 
 async def delete_one(cat_id: dto.CatID) -> dto.ResultCount:
     return await cat_model.delete_one(cat_id=cat_id)
+
+
+async def update_cat_metadata(cat_id: dto.CatID, url: dto.CatURL) -> dto.ResultCount:
+    result = await cat_model.update_cat_metadata(
+        cat_id=cat_id,
+        url=url,
+    )
+
+    return result

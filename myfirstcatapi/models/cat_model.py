@@ -190,3 +190,26 @@ async def delete_one(cat_id: dto.CatID) -> dto.ResultCount:
         count = result.deleted_count
 
     return dto.ResultCount(count=count)
+
+
+async def update_cat_metadata(cat_id: dto.CatID, url: dto.CatURL) -> dto.ResultCount:
+    print(cat_id, url)
+    filter = dto.CatFilter(
+        cat_id=cat_id,
+    )
+
+    try:
+        match = cat_filter_to_db_match(filter)
+    except EmptyResultsFilter:
+        return dto.ResultCount(count=0)
+
+    collection = await get_collection(_COLLECTION_NAME)
+    query = {"$set": {"url": url}}
+
+    result = await collection.update_one(match, query)
+
+    if result:
+        count = result.modified_count
+    print("count", count)
+
+    return dto.ResultCount(count=count)

@@ -110,3 +110,17 @@ async def test_delete_one(mock_cat_model_delete_one: mock.Mock, cat_id: dto.CatI
     await cat_domain.delete_one(cat_id)
 
     mock_cat_model_delete_one.assert_called_once_with(cat_id=cat_id)
+
+
+@pytest.mark.parametrize(
+    "cat_id, url",
+    [(dto.CatID("000000000000000000000101"), dto.CatURL("http://placekitten.com/200/300"))],
+)
+@mock.patch("myfirstcatapi.models.cat_model.update_cat_metadata")
+@conftest.async_test
+async def test_update_cat_metadata(
+    mock_cat_model_update_cat_metadata: mock.Mock, cat_id: dto.CatID, url: dto.CatURL
+) -> None:
+    await cat_domain.update_cat_metadata(cat_id, url)
+
+    mock_cat_model_update_cat_metadata.assert_called_once_with(cat_id=cat_id, url=url)

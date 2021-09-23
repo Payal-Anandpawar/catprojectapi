@@ -1,7 +1,9 @@
+import asyncio
 import logging
 from typing import Callable, Mapping
 
 from myfirstcatapi import dto
+from myfirstcatapi.domains import cat_domain
 from myfirstcatapi.exceptions import EventException
 
 logger = logging.getLogger(__name__)
@@ -26,6 +28,9 @@ def handle_cat_created(data: dto.JSON) -> None:
     event_id = data.get("event_id")
     cat_id = data.get("cat_id")
     required_keys = {"cat_id"}
+    print("event_id", event_id)
+    print("cat_id", cat_id)
+    cat_id = str(cat_id)
 
     if not all(key in data for key in required_keys):
         exception_message = (
@@ -36,7 +41,17 @@ def handle_cat_created(data: dto.JSON) -> None:
         raise EventException(exception_message)
 
     logger.info(f"[{event_id}] Cat {cat_id} has been created")
+
     # TODO: Handle the async postprocessing of a created Cat here.
+    try:
+        url = "http://placekitten.com/200/300"
+        loop = asyncio.get_event_loop()
+        coroutine = cat_domain.update_cat_metadata(cat_id=dto.CatID(cat_id), url=dto.CatURL(url))
+        loop.run_until_complete(coroutine)
+    except ValueError:
+        exception_message = f"Cannot process event: invalid partial update. Got: {url}"
+        logger.exception(f"[{event_id}] {exception_message}")
+        raise EventException(exception_message)
 
 
 EVENT_HANDLERS: Mapping[str, Callable] = {

@@ -12,6 +12,7 @@ UnsetT = NewType("UnsetT", str)
 
 OrganizationID = NewType("OrganizationID", str)
 CatID = NewType("CatID", str)
+CatURL = NewType("CatURL", str)
 
 JSON = Dict[str, Any]
 
