@@ -30,9 +30,5 @@ async def find_many(
     return results
 
 
-async def get_total_cats_count() -> int:
-    return await cat_model.get_total_cats_count()
-
-
 async def delete_one(cat_id: dto.CatID) -> dto.ResultCount:
     return await cat_model.delete_one(cat_id=cat_id)

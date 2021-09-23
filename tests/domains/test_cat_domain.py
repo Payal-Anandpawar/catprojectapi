@@ -100,14 +100,6 @@ async def test_find_many(
     )
 
 
-@mock.patch("myfirstcatapi.models.cat_model.get_total_cats_count")
-@conftest.async_test
-async def test_get_total_cats_count(mock_cat_model_get_total_cats_count: mock.Mock) -> None:
-    await cat_domain.get_total_cats_count()
-
-    mock_cat_model_get_total_cats_count.assert_called_once_with()
-
-
 @pytest.mark.parametrize(
     "cat_id",
     ["000000000000000000000101"],

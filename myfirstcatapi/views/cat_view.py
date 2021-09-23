@@ -107,20 +107,3 @@ async def delete_cat(
     count = await cat_domain.delete_one(cat_id=cat_id)
 
     return count
-
-
-@router.get(
-    "/cat/count",
-    response_model=int,
-    response_model_exclude_unset=True,
-)
-async def get_total_cats_count() -> int:
-    """
-    API for Total cat count
-
-    \f
-    :return:
-    """
-    count = await cat_domain.get_total_cats_count()
-
-    return count
