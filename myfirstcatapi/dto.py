@@ -92,10 +92,11 @@ class Cat(BaseModel):
 class CatSummary(BaseModel):
     id: CatID
     name: str
+    url: Optional[str] = None
 
 
 class PartialUpdateCat(BaseModel):
-    name: Optional[str]
+    url: Optional[str]
 
 
 class CatFilter(BaseModel):

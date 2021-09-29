@@ -140,20 +140,23 @@ def test_get_cat_not_found(
                     dto.CatSummary(
                         id=dto.CatID("000000000000000000000101"),
                         name="Sammybridge Cat",
+                        url=None,
                     ),
                     dto.CatSummary(
                         id=dto.CatID("000000000000000000000102"),
                         name="Shirasu Sleep Industries Cat",
+                        url=None,
                     ),
                 ],
                 metadata=dto.PageMetadata(has_next_page=False),
             ),
             {
                 "results": [
-                    {"id": "000000000000000000000101", "name": "Sammybridge Cat"},
+                    {"id": "000000000000000000000101", "name": "Sammybridge Cat", "url": None},
                     {
                         "id": "000000000000000000000102",
                         "name": "Shirasu Sleep Industries Cat",
+                        "url": None,
                     },
                 ],
                 "metadata": {"has_next_page": False},
@@ -169,13 +172,14 @@ def test_get_cat_not_found(
                     dto.CatSummary(
                         id=dto.CatID("000000000000000000000101"),
                         name="Sammybridge Cat",
+                        url=None,
                     ),
                 ],
                 metadata=dto.PageMetadata(has_next_page=False),
             ),
             {
                 "results": [
-                    {"id": "000000000000000000000101", "name": "Sammybridge Cat"},
+                    {"id": "000000000000000000000101", "name": "Sammybridge Cat", "url": None},
                 ],
                 "metadata": {"has_next_page": False},
             },

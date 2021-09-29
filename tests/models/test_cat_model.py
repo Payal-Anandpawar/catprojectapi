@@ -382,3 +382,98 @@ async def test_delete_one(
     actual_documents = [document async for document in collection.find()]
 
     assert actual_documents == expected_document
+
+
+@pytest.mark.parametrize(
+    "existing_cat_documents, cat_id, partial_update, expected_result, expected_document",
+    [
+        (
+            [
+                {
+                    "_id": ObjectId("000000000000000000000101"),
+                    "name": "Sammybridge Cat",
+                    "ctime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                    "mtime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                },
+                {
+                    "_id": ObjectId("000000000000000000000102"),
+                    "name": "Shirasu Sleep Industries Cat",
+                    "ctime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                    "mtime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                },
+            ],
+            dto.CatID("000000000000000000000101"),
+            dto.PartialUpdateCat(url="http://placekitten.com/200/300"),
+            dto.ResultCount(
+                count=1,
+            ),
+            [
+                {
+                    "_id": ObjectId("000000000000000000000101"),
+                    "name": "Sammybridge Cat",
+                    "ctime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                    "mtime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                    "url": "http://placekitten.com/200/300",
+                },
+                {
+                    "_id": ObjectId("000000000000000000000102"),
+                    "name": "Shirasu Sleep Industries Cat",
+                    "ctime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                    "mtime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                },
+            ],
+        ),
+        (
+            [
+                {
+                    "_id": ObjectId("000000000000000000000101"),
+                    "name": "Sammybridge Cat",
+                    "ctime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                    "mtime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                },
+                {
+                    "_id": ObjectId("000000000000000000000102"),
+                    "name": "Shirasu Sleep Industries Cat",
+                    "ctime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                    "mtime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                },
+            ],
+            dto.CatID("000000000000000000000000"),
+            dto.PartialUpdateCat(url="http://placekitten.com/200/300"),
+            dto.ResultCount(
+                count=0,
+            ),
+            [
+                {
+                    "_id": ObjectId("000000000000000000000101"),
+                    "name": "Sammybridge Cat",
+                    "ctime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                    "mtime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                },
+                {
+                    "_id": ObjectId("000000000000000000000102"),
+                    "name": "Shirasu Sleep Industries Cat",
+                    "ctime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                    "mtime": datetime(2020, 1, 1, 0, 0, tzinfo=UTC),
+                },
+            ],
+        ),
+    ],
+)
+@conftest.async_test
+async def test_update_cat_metadata(
+    existing_cat_documents: List[BSONDocument],
+    cat_id: dto.CatID,
+    partial_update: dto.PartialUpdateCat,
+    expected_result: dto.ResultCount,
+    expected_document: List[BSONDocument],
+) -> None:
+    collection = await get_collection(cat_model._COLLECTION_NAME)
+    await collection.insert_many(existing_cat_documents)
+
+    found_cat = await cat_model.update_cat_metadata(cat_id, partial_update)
+
+    assert found_cat == expected_result
+    actual_documents = [document async for document in collection.find()]
+
+    assert actual_documents == expected_document

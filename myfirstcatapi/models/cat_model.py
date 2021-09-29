@@ -20,6 +20,7 @@ _COLLECTION_NAME = "cats"
 _CAT_SUMMARY_PROJECTION = {
     "_id": 1,
     "name": 1,
+    "url": 1,
 }
 
 
@@ -188,5 +189,25 @@ async def delete_one(cat_id: dto.CatID) -> dto.ResultCount:
 
     if result:
         count = result.deleted_count
+
+    return dto.ResultCount(count=count)
+
+
+async def update_cat_metadata(
+    cat_id: dto.CatID, partial_update: dto.PartialUpdateCat
+) -> dto.ResultCount:
+    filter = dto.CatFilter(
+        cat_id=cat_id,
+    )
+
+    try:
+        match = cat_filter_to_db_match(filter)
+    except EmptyResultsFilter:
+        return dto.ResultCount(count=0)
+
+    collection = await get_collection(_COLLECTION_NAME)
+    query = {"$set": {"url": partial_update.url}}
+    result = await collection.update_one(match, query)
+    count = result.modified_count
 
     return dto.ResultCount(count=count)
