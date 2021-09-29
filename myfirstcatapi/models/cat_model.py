@@ -193,7 +193,9 @@ async def delete_one(cat_id: dto.CatID) -> dto.ResultCount:
     return dto.ResultCount(count=count)
 
 
-async def update_cat_metadata(cat_id: dto.CatID, url: dto.CatURL) -> dto.ResultCount:
+async def update_cat_metadata(
+    cat_id: dto.CatID, partial_update: dto.PartialUpdateCat
+) -> dto.ResultCount:
     filter = dto.CatFilter(
         cat_id=cat_id,
     )
@@ -204,10 +206,8 @@ async def update_cat_metadata(cat_id: dto.CatID, url: dto.CatURL) -> dto.ResultC
         return dto.ResultCount(count=0)
 
     collection = await get_collection(_COLLECTION_NAME)
-    query = {"$set": {"url": url}}
+    query = {"$set": {"url": partial_update.url}}
     result = await collection.update_one(match, query)
-
-    if result:
-        count = result.modified_count
+    count = result.modified_count
 
     return dto.ResultCount(count=count)

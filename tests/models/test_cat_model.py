@@ -385,7 +385,7 @@ async def test_delete_one(
 
 
 @pytest.mark.parametrize(
-    "existing_cat_documents, cat_id, url, expected_result, expected_document",
+    "existing_cat_documents, cat_id, partial_update, expected_result, expected_document",
     [
         (
             [
@@ -403,7 +403,7 @@ async def test_delete_one(
                 },
             ],
             dto.CatID("000000000000000000000101"),
-            dto.CatURL("http://placekitten.com/200/300"),
+            dto.PartialUpdateCat(url="http://placekitten.com/200/300"),
             dto.ResultCount(
                 count=1,
             ),
@@ -439,7 +439,7 @@ async def test_delete_one(
                 },
             ],
             dto.CatID("000000000000000000000000"),
-            dto.CatURL("http://placekitten.com/200/300"),
+            dto.PartialUpdateCat(url="http://placekitten.com/200/300"),
             dto.ResultCount(
                 count=0,
             ),
@@ -464,14 +464,14 @@ async def test_delete_one(
 async def test_update_cat_metadata(
     existing_cat_documents: List[BSONDocument],
     cat_id: dto.CatID,
-    url: dto.CatURL,
+    partial_update: dto.PartialUpdateCat,
     expected_result: dto.ResultCount,
     expected_document: List[BSONDocument],
 ) -> None:
     collection = await get_collection(cat_model._COLLECTION_NAME)
     await collection.insert_many(existing_cat_documents)
 
-    found_cat = await cat_model.update_cat_metadata(cat_id, url)
+    found_cat = await cat_model.update_cat_metadata(cat_id, partial_update)
 
     assert found_cat == expected_result
     actual_documents = [document async for document in collection.find()]

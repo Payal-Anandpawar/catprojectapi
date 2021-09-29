@@ -42,14 +42,16 @@ def handle_cat_created(data: dto.JSON) -> None:
 
     # TODO: Handle the async postprocessing of a created Cat here.
     try:
-        url = "http://placekitten.com/200/300"
+        partial_update = dto.PartialUpdateCat(url="http://placekitten.com/200/300")
     except ValueError:
-        exception_message = f"Cannot process event: invalid partial update. Got: {url}"
+        exception_message = f"Cannot process event: invalid partial update. Got: {partial_update}"
         logger.exception(f"[{event_id}] {exception_message}")
         raise EventException(exception_message)
 
     loop = asyncio.get_event_loop()
-    coroutine = cat_domain.update_cat_metadata(cat_id=dto.CatID(cat_id_str), url=dto.CatURL(url))
+    coroutine = cat_domain.update_cat_metadata(
+        cat_id=dto.CatID(cat_id_str), partial_update=partial_update
+    )
     loop.run_until_complete(coroutine)
 
 

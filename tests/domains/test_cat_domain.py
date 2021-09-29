@@ -113,11 +113,11 @@ async def test_delete_one(mock_cat_model_delete_one: mock.Mock, cat_id: dto.CatI
 
 
 @pytest.mark.parametrize(
-    "cat_id, url, expected_cat",
+    "cat_id, partial_update, expected_cat",
     [
         (
             dto.CatID("000000000000000000000101"),
-            dto.CatURL("http://placekitten.com/200/300"),
+            dto.PartialUpdateCat(url="http://placekitten.com/200/300"),
             dto.ResultCount(count=1),
         )
     ],
@@ -127,12 +127,14 @@ async def test_delete_one(mock_cat_model_delete_one: mock.Mock, cat_id: dto.CatI
 async def test_update_cat_metadata(
     mock_cat_model_update_cat_metadata: mock.Mock,
     cat_id: dto.CatID,
-    url: dto.CatURL,
+    partial_update: dto.PartialUpdateCat,
     expected_cat: dto.ResultCount,
 ) -> None:
     mock_cat_model_update_cat_metadata.return_value = expected_cat
 
-    result = await cat_domain.update_cat_metadata(cat_id, url)
+    result = await cat_domain.update_cat_metadata(cat_id, partial_update)
 
     assert result == expected_cat
-    mock_cat_model_update_cat_metadata.assert_called_once_with(cat_id=cat_id, url=url)
+    mock_cat_model_update_cat_metadata.assert_called_once_with(
+        cat_id=cat_id, partial_update=partial_update
+    )

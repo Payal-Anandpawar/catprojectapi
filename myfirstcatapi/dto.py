@@ -12,7 +12,6 @@ UnsetT = NewType("UnsetT", str)
 
 OrganizationID = NewType("OrganizationID", str)
 CatID = NewType("CatID", str)
-CatURL = NewType("CatURL", str)
 
 JSON = Dict[str, Any]
 
@@ -97,7 +96,7 @@ class CatSummary(BaseModel):
 
 
 class PartialUpdateCat(BaseModel):
-    name: Optional[str]
+    url: Optional[str]
 
 
 class CatFilter(BaseModel):

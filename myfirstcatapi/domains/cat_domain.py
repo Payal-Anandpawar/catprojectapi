@@ -37,10 +37,12 @@ async def delete_one(cat_id: dto.CatID) -> dto.ResultCount:
     return await cat_model.delete_one(cat_id=cat_id)
 
 
-async def update_cat_metadata(cat_id: dto.CatID, url: dto.CatURL) -> dto.ResultCount:
+async def update_cat_metadata(
+    cat_id: dto.CatID, partial_update: dto.PartialUpdateCat
+) -> dto.ResultCount:
     result = await cat_model.update_cat_metadata(
         cat_id=cat_id,
-        url=url,
+        partial_update=partial_update,
     )
 
     return result
